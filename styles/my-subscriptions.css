@@ -1,0 +1,32 @@
+.subscriptions{
+    color: #eaaa01;
+    margin: 3rem auto;
+}
+
+.subscriptions .underline{
+    background-color: #eaaa01;
+}
+.subscriptions table td, .subscriptions table th{
+    padding: 1rem;
+    border: 2px solid #00a69c;
+    font-weight: 500;
+}
+
+.subscriptions td a{
+    color: #00a69c;
+}
+
+.terms-of-service{
+    color: #eaaa01;
+    max-width: 800px;
+    margin: auto;
+}
+
+.terms-of-service p{
+    margin-bottom: 1rem;
+}
+
+.slide-arena-logo-container{
+    min-height: 100vh;
+    align-content: center;;
+}

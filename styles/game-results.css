@@ -1,0 +1,38 @@
+.landing{
+    margin-top: 5rem;
+    color: #eaaa01;
+    padding: 1rem;
+}
+.underline{
+    width: 80px;
+    height: 2px;
+    background-color: #eaaa01;
+    margin:2rem auto 1rem auto;
+}
+.landing h1{
+    text-align: center;
+}
+.results-table-container{
+    overflow: auto;
+}
+.results-table{
+    border-collapse: collapse;
+    margin: auto;
+}
+.results-table td, .results-table th{
+    padding: 0.8rem 1.5rem;
+    text-align: left;
+    border: 2px solid #eaaa01;
+}
+.back-to-dashboard{
+    padding: 1rem 2.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    display: block;
+    margin: 2rem auto;
+    width: max-content;
+    background-color: #00a69c;
+    color: #333333;
+    color: white;
+    font-weight:500;
+}

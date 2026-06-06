@@ -1,0 +1,52 @@
+.landing{
+    display: grid;
+    display:  moz-grid;
+}
+
+.landing{
+    grid-template-columns: auto;
+    justify-content: center;
+    align-content: center;
+    text-align: center;
+    height: 90vh;
+    color:#eaaa01;
+}
+
+.landing h1{
+    text-align: center;
+    font-weight: 500;
+}
+
+.landing .timer{
+    color: white;
+    padding: 2rem;
+    width: max-content;
+    margin: auto;
+}
+
+.landing .timer .seconds{
+    background-color: #00a69c;
+    color: #333333;
+    font-weight: 500;
+    padding: 1.5rem;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    border-radius: 5px;
+}
+
+.landing .timer span:last-of-type{
+    margin-left: 1rem;
+    color: black;
+    color:#eaaa01;
+}
+
+.leave-room-button{
+    padding: 1rem 2rem;
+    background-color: transparent;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+.leave-room-button:hover{
+    cursor: pointer;
+}

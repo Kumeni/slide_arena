@@ -1,0 +1,56 @@
+.timer{
+    display: grid;
+    display: -ms-grid;
+    display: -moz-grid;
+}
+
+.timer{
+    grid-template-columns: repeat(7, max-content);
+    grid-template-rows: auto;
+    align-items: center;
+    color: #00a69c;
+    font-weight: 500;
+    column-gap: 0.5rem;
+    justify-content: center;
+}
+
+.timer p{
+    text-align: center;
+}
+
+.timer > div p:first-of-type{
+    font-size: 2.3rem;
+    margin:0rem;
+    padding: 0rem;
+}
+
+.timer > div p:last-of-type{
+    font-size: 0.5rem;
+}
+
+.subscription-timer{
+    margin-right: 1rem;
+}
+
+.subscription-timer > p{
+    color: #00a69c;
+    text-align: center;
+    font-weight: 500;
+}
+
+.subscription-timer .underline{
+    background-color: #eaaa01;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.max-tournament-games{
+    margin-top: 1rem;
+}
+
+.max-tournament-games span{
+    color: #333333;
+    background-color: #00a69c;
+    padding:0.3rem 0.8rem;
+    border-radius: 4px;
+}

@@ -1,0 +1,56 @@
+.subscriptions{
+    color: #eaaa01;
+    margin: 3rem auto;
+}
+
+.subscriptions h1{
+    text-align: center;
+}
+
+.subscriptions .underline{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.subscriptions .underline{
+    background-color: #eaaa01;
+}
+.subscriptions table td, .subscriptions table th{
+    padding: 1rem;
+    border: 2px solid #00a69c;
+    font-weight: 500;
+}
+
+.subscriptions td a{
+    color: #00a69c;
+}
+
+.subscriptions > div:last-of-type{
+    max-width: 800px;
+}
+
+.terms-of-service{
+    color: #eaaa01;
+    max-width: 600px;
+    margin: auto;
+    margin-top: 5rem;
+}
+
+.terms-of-service p{
+    margin-bottom: 2rem;
+}
+
+.terms-of-service ul{
+    margin-bottom: 2rem;
+}
+
+.slide-arena-logo-container{
+    align-content: center;
+    column-gap: 2rem !important;
+    justify-content: center;
+}
+
+.slide-arena-logo-container img{
+    height: 60px;
+    width: auto !important;
+}

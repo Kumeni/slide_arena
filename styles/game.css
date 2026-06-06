@@ -1,0 +1,82 @@
+.game-container{
+	display: grid;
+	display: -moz-grid;
+	display: -ms-grid;
+}
+
+body{
+	color: #eaaa01;
+	min-height: 100vh;
+	grid-template-columns: auto;
+	grid-template-rows: auto;
+	align-content: center;
+}
+
+.game-container {
+	grid-template-columns: auto;
+	grid-template-rows: auto;
+	row-gap: 2rem;
+	justify-content: center;
+	align-items: center;
+}
+
+.game-container h1, .game-container p{
+	text-align: center;
+	Font-weight: 500;
+}
+
+.puzzle {
+	display: grid;
+	grid-template-columns: repeat(3, max-content);
+	grid-template-rows: repeat(3, max-content);
+	width: max-content;
+	gap: 8px;
+	flex-shrink: 0;
+	justify-self: center;
+}
+
+.tile{
+	background: #00a69c;
+	display: grid;
+	justify-content: center;
+	align-items: center;
+	font-size: 28px;
+	font-weight: bold;
+	border-radius: 10px;
+	cursor: pointer;
+	color: #333333;
+	color: white;
+	width: 90px;
+	height: 90px;
+}
+
+@media (max-width: 375px){
+	.tile{
+		width: 70px;
+		height: 70px;
+	}
+}
+
+.empty {
+	background: transparent;
+	cursor: default;
+}
+
+input, button {
+	padding: 8px 12px;
+	font-size: 14px;
+	margin: 5px;
+	border-radius: 6px;
+	border: none;
+}
+
+button {
+	background: #22c55e;
+	cursor: pointer;
+}
+
+.message{
+	margin-top: 10px;
+	color: #22c55e;
+	font-weight: bold;
+}

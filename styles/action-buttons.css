@@ -1,0 +1,12 @@
+.join-now-button{
+    padding: 1rem 2rem;
+    border-radius: 5px;
+    color: #333333;
+    background-color: #eaaa01;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.join-now-button:hover{
+    cursor: pointer;
+}
