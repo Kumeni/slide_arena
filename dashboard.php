@@ -1,0 +1,228 @@
+<?php
+    require './api/db.php';
+    require './api/db-operations.php';
+    require './api/core.php';
+
+    //fetch the current game depending on the game Id
+    $browserUUID = getBrowserUUID($host, $user, $password, $database);
+    $PlayerIPAddress = $_SERVER['REMOTE_ADDR'];
+
+    logOutPlayer($host, $user, $password, $database, $browserUUID);
+    
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=100, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/global.css" />
+    <link rel="stylesheet" href="./styles/header.css" />
+    <link rel="stylesheet" href="./styles/dashboard.css" />
+    <link rel="stylesheet" href="./styles/action-buttons.css" />
+    <link rel="stylesheet" href="./styles/footer.css" />
+    <link rel="stylesheet" href="./styles/subscription-timer.css" />
+    <link rel="shortcut icon" href="./assets/slide-arena-logo.png"/>
+
+    <title>Slide Arena</title>
+</head>
+<body>
+    <section class="landing">
+        <div class="sign-in-n-quick-links">
+            <button class="sign-in-with-google"><img src="./assets/google icon.png" /> <span>Sign in with Google</span></button>
+            <div>
+                <div class="subscription-timer">
+                    <p>Active Subscription</p>
+                    <div class="underline"></div>
+                    <p>Time to Expiry</p>
+                    <div class="timer">
+                        <div>
+                            <p id="remaining-days">12</p>
+                            <p>days</p>
+                        </div>
+                        <span>:</span>
+                        <div>
+                            <p id="remaining-hours">12</p>
+                            <p>hours</p>
+                        </div>
+                        <span>:</span>
+                        <div>
+                            <p id="remaining-minutes">32</p>
+                            <p>mins</p>
+                        </div>
+                        <span>:</span>
+                        <div>
+                            <p id="remaining-seconds">12</p>
+                            <p>seconds</p>
+                        </div>
+                    </div>
+                    <p class="max-tournament-games">Max. Promo Tournament games: <span id="max_tournaments">0</span></p>
+                </div>
+                <ul class="quick-links">
+                    <a href="./">Home</a>
+                    <a href="#">My Profile</a>
+                    <a href="./my-subscriptions.php">My Subscriptions</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Privacy Policy</a>
+                </ul>
+            </div>
+            
+        </div>
+
+        <div class="slide-arena-logo-container">
+            <img class="slide-arena-logo" src="./assets/slide-arena-logo.png" alt="Slide Arena Logo"/>
+            <img class="rotating-triangle" src="./assets/triangle.png" />
+        </div>
+
+        <div class="game-instructions">
+            <p>
+                Slide the Tiles into Order.<br />
+                Beat Everyone &#128175;. 
+            </p>
+        </div>
+    </section>
+
+    <section class="rewards-container" id="rewards">
+        <div class="available-rewards">
+            <h2>My Rewards</h2>
+            <div class="underline"></div>
+
+            <div class="amount">
+                <p>Ksh.</p>
+                <p>300</p>
+            </div>
+
+            <div class="rewards-quick-actions">
+                <a href="#">Withdraw to Mpesa</a>
+                <a href="#">Withdraw to Paypal</a>
+                <a href="#">Buy Subscription</a>
+            </div>
+        </div>
+        <div class="quick-game">
+            <img class="slide-puzzle" src="./assets/slide puzzle.png" alt="3 by 3 slide puzzle" />
+            <a class="play-now-button" id="play-now-button" href="#">Play Now</a>
+        </div>
+    </section>
+    <header style="visibility: hidden;">
+        <div>
+            <div class="header-items">
+                <div>
+                    <div class="menu-bars" onclick="toggleNavigation()">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <a href="./"><img src="" class="yosambranding-logo"/></a>
+                </div>
+                <ul>
+                    <a href="./buy-subscription.html" class="buy-subscription">Buy Subscription</a>
+                </ul>
+                <ul>
+                    <a href="./contact-us.html">Contact Us</a>
+                    <a href="./about-us.html">Log Out</a>
+                </ul>
+            </div>
+        </div>
+        <div class="hamburger-menu navigation">
+            <div>
+                <ul>
+                    <a href="./t-shirt-printing.html">Tshirt Printing</a>
+                    
+                </ul>
+            </div>
+        </div>
+    </header>
+    
+    <section class="games-and-stats" id="quick-games">
+        <div>
+            <div class="games-category">
+                <h2>Quick Games</h2>
+                <div class="underline"></div>
+
+                <div class="table-container">
+                    <table>
+                        <thead></thead>
+                        <tbody id="available-games">
+                            <tr>
+                                <th></th>
+                                <th>Players</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <th>1.</th>
+                                <td> <span>5 players</span><br /><span>2 remaining</span></td>
+                                <td><a href="./game.html"class="join-now-button">JOIN NOW</a></td>
+                            </tr>
+                            <tr>
+                                <th>2.</th>
+                                <td> <span>10 players</span><br /><span>3 remaining</span></td>
+                                <td><a href="./game.html"class="join-now-button">JOIN NOW</a></td>
+                            </tr>
+                            <tr>
+                                <th>3.</th>
+                                <td> <span>20 players</span><br /><span>6 remaining</span></td>
+                                <td><a href="./game.html"class="join-now-button">JOIN NOW</a></td>
+                            </tr>
+                            <tr>
+                                <th>4.</th>
+                                <td> <span>30 players</span><br /><span>7 remaining</span></td>
+                                <td><a href="./game.html"class="join-now-button">JOIN NOW</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+            <div class="games-category">
+                <h2>Platform Sponsored Tournaments</h2>
+                <div class="underline"></div>
+
+                <div class="table-container">
+                    <table>
+                        <thead></thead>
+                        <tbody id="platform-sponsored-games">
+                            <tr>
+                                <th></th>
+                                <th>Reward</th>
+                                <th>Players</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <th>1.</th>
+                                <td> Ksh. 80</td>
+                                <td> <span>5 players</span><br /><span>2 remaining</span></td>
+                                <td><a href="./game.html"class="join-now-button">JOIN NOW</a></td>
+                            </tr>
+                            <tr>
+                                <th>2.</th>
+                                <td> Ksh. 160</td>
+                                <td> <span>10 players</span><br /><span>3 remaining</span></td>
+                                <td><a href="./game.html"class="join-now-button">JOIN NOW</a></td>
+                            </tr>
+                            <tr>
+                                <th>3.</th>
+                                <td> Ksh. 320</td>
+                                <td> <span>20 players</span><br /><span>6 remaining</span></td>
+                                <td><a href="./game.html"class="join-now-button">JOIN NOW</a></td>
+                            </tr>
+                            <tr>
+                                <th>4.</th>
+                                <td> Ksh. 480</td>
+                                <td> <span>30 players</span><br /><span>7 remaining</span></td>
+                                <td><a href="./game.html"class="join-now-button">JOIN NOW</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+
+    <footer>
+        <p>Copyright &#169; 2025 | All Rights Reserved</p>
+    </footer>
+    <script src="./scripts/api.js"></script>
+    <script src="./scripts/dashboard.js"></script>
+</body>
+</html>
