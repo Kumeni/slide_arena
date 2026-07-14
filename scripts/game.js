@@ -35,7 +35,7 @@ const render = () => {
 		puzzle.appendChild(tile);
 	});
 
-	checkWin();
+	//checkWin();
 }
 
 const moveTile = (index) => {
@@ -155,6 +155,7 @@ const uploadMove = async (tiles) => {
 		})
 
 		console.log(response);
+		checkWin();
 		/*formData.append("moves", tiles.toString());
 		formData.append("user_id", player.id);
 		formData.append("game_id", game.id);

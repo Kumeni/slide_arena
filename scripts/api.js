@@ -80,14 +80,20 @@ const getBrowserUUID = () => {
 
 const getSubscriptionExpiryTime = async () => {
     const mySubscriptions = await get("./api/my-subscriptions.php");
-    updateMaxTournamentGames(mySubscriptions.max_tournaments);
+
+    //console.log(mySubscriptions);
+    updateMaxTournamentGames(mySubscriptions.remaining_platform_sponsored_tournamens);
 
     return mySubscriptions.expiry_time;
 }
 
 const getTimeToExpiry = (futureDateTime) => {
-    const now = new Date();
-    const future = new Date(futureDateTime);
+    let now = new Date();
+    let future = new Date(futureDateTime);
+
+    if(futureDateTime == undefined){
+        future = now;
+    }
 
     let diff = future - now;
 
@@ -123,9 +129,7 @@ const getTimeToExpiry = (futureDateTime) => {
     };
 }
 
-const updateTimeToExpiry = async () => {
-
-    let expiryDateTime = await getSubscriptionExpiryTime();
+const updateTimeToExpiry = async (expiryDateTime) => {
     let timeToExpiry = getTimeToExpiry(expiryDateTime);
     document.getElementById("remaining-days").innerHTML = timeToExpiry.days;
     document.getElementById("remaining-hours").innerHTML = timeToExpiry.hours;
@@ -133,12 +137,66 @@ const updateTimeToExpiry = async () => {
     document.getElementById("remaining-seconds").innerHTML = timeToExpiry.seconds;
 }
 
-const updateMaxTournamentGames = (maxTournaments) => {
+const updateMaxTournamentGames = (maxTournaments = 0) => {
     document.getElementById("max_tournaments").innerHTML = maxTournaments;
 }
+
+function createEventSource(url, events = {}) {
+    const source = new EventSource(url);
+
+    // Standard EventSource events
+    if (typeof events.open === "function") {
+        source.onopen = (event) => events.open(event, source);
+    }
+
+    if (typeof events.message === "function") {
+        source.onmessage = (event) => events.message(event, source);
+    }
+
+    if (typeof events.error === "function") {
+        source.onerror = (event) => events.error(event, source);
+    }
+
+    // Custom named events
+    for (const [eventName, callback] of Object.entries(events)) {
+        if (["open", "message", "error"].includes(eventName)) {
+            continue;
+        }
+
+        if (typeof callback === "function") {
+            source.addEventListener(eventName, (event) => {
+                callback(event, source);
+            });
+        }
+    }
+
+    return source;
+}
+
+const fetchBrowserUUID = async () => {
+    let browser_uuid = get("./api/get-browser-uuid.php");
+    storeBrowserUUID(browser_uuid.browser_uuid);
+    return browser_uuid.browser_uuid;
+}
+
+const storeBrowserUUID = (browserUUID) => {
+    if (!browserUUID) return false;
+
+    const existingUUID = localStorage.getItem("browser_uuid");
+
+    if (existingUUID !== browserUUID) {
+        localStorage.setItem("browser_uuid", browserUUID);
+    }
+
+    return true;
+}
+
 const API = {
     get: (endpoint) => get(endpoint),
     post: (endpoint, data) => post(endpoint, data),
     getBrowserUUID: getBrowserUUID(),
-    updateTimeToExpiry: () => updateTimeToExpiry()
+    updateTimeToExpiry: (expiryDateTime) => updateTimeToExpiry(expiryDateTime),
+    createEventSource: (url, events)=>createEventSource(url, events),
+    getSubscriptionExpiryTime: ()=> getSubscriptionExpiryTime(),
+    fetchBrowserUUID: () => fetchBrowserUUID()
 };

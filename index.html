@@ -39,7 +39,19 @@
         </div>
     </section>
     
-    <script src="./scripts/api.js"></script>
-    <script src="./scripts/dashboard.js"></script>
+    <!--<script src="./scripts/api.js"></script>
+    <script src="./scripts/dashboard.js"></script> -->
+
+    <script>
+        const events = new EventSource("./api/stream.php");
+
+        events.addEventListener("balance", function(e){
+            let balance = JSON.parse(e.data);
+        });
+
+        events.onerror = function(){
+            console.log("Disconnected");
+        };
+    </script>
 </body>
 </html>

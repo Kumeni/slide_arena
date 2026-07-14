@@ -59,7 +59,7 @@
         </div>
         
         <div>
-            <a href="./dashboard.html?#rewards" class="back-to-dashboard">Dashboard</a>
+            <a href="./dashboard.php?#rewards" class="back-to-dashboard">Dashboard</a>
         </div>
     </section>
     <script src="./scripts/api.js"></script>

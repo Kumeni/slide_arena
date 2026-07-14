@@ -239,7 +239,7 @@
 }
 
 .games-and-stats > div{
-    grid-template-columns: auto;
+    grid-template-columns: auto auto;
     justify-content: center;
     column-gap: 2rem;
 }

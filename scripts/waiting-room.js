@@ -1,13 +1,20 @@
 "use strict";
+let player = undefined;
 
 const getGames = async (userId) => {
-	let games = await API.get("./api/games.php?");
+	let games = await API.get("./api/games.php");
 	games = JSON.parse(games);
 	console.log(games);
     updateAvailableGamesUI(games);
 }
 
-//getGames();
+const joinRoom = async(gameId) => {
+    let joinRoomStatus = await API.post("./api/join-game.php", {
+        gameId:game.id
+    });
+    joinRoomStatus = joinRoomStatus;
+    player = joinRoomStatus;
+}
 
 const getGame = async (gameId) => {
 
@@ -16,17 +23,16 @@ const getGame = async (gameId) => {
 	document.getElementById("no-of-players").innerHTML = game.no_of_players;
 	document.getElementById("players-remaining").innerHTML = getRemainingPlayers(game);
 	document.getElementById("remaining-time").innerHTML = getRemainingTimeInSeconds(game.start_time);
-	
 
 	if(getRemainingPlayers(game) == 0){
-		const el = document.getElementById("time-remaining");
+		/*const el = document.getElementById("time-remaining");
 
 		if (el) {
 			el.scrollIntoView({
 				behavior: "smooth",
 				block: "center" // or "start", "end"
 			});
-		}
+		}*/
 	}
 	
 	game.no_of_players > 1 ? document.getElementById("no-of-players-state").innerHTML = "s": document.getElementById("no-of-players-state").innerHTML = "";
@@ -97,5 +103,58 @@ const startGame = (eatTimeString, gameId) => {
 }
 
 const checkGameStatus = setInterval(() => {
-    getGame(game.id);
+    //getGame(game.id);
 }, 1000);
+
+const sse = createEventSource("./api/game-status.php?game-id=" + game.id, {
+
+    open(event) {
+        console.log("Connection opened.");
+    },
+
+    game(event){
+        console.log(event.data);
+        let data = JSON.parse(event.data);
+        let game = data;
+        let gameId = data.id;
+
+        document.getElementById("no-of-players").innerHTML = game.no_of_players;
+        document.getElementById("players-remaining").innerHTML = getRemainingPlayers(game);
+        document.getElementById("remaining-time").innerHTML = getRemainingTimeInSeconds(game.start_time);
+
+        if(getRemainingPlayers(game) == 0){
+            /*const el = document.getElementById("time-remaining");
+
+            if (el) {
+                el.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center" // or "start", "end"
+                });
+            }*/
+        }
+        
+        game.no_of_players > 1 ? document.getElementById("no-of-players-state").innerHTML = "s": document.getElementById("no-of-players-state").innerHTML = "";
+        startGame(game.start_time, gameId);
+    },
+
+    message(event) {
+        //console.log("Message:", event.data);
+    },
+
+    balance(event){
+        console.log("Balance: ", event);
+    },
+
+    error(event, source) {
+        console.log("Connection error.");
+
+        // Close the connection if desired
+        // source.close();
+    }
+
+});
+
+joinRoom(game);
+/*const joinRoomLoop = setInterval(()=>{
+    joinRoom(game.id);
+}, 5000)*/

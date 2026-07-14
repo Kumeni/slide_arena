@@ -44,9 +44,13 @@
 .leave-room-button{
     padding: 1rem 2rem;
     background-color: transparent;
-    border: 2px solid black;
+    border: 2px solid #00a69c;
     border-radius: 5px;
 }
 .leave-room-button:hover{
     cursor: pointer;
+}
+.leave-room-button a{
+    color: #00a69c;
+    text-decoration: none;
 }

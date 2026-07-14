@@ -6,9 +6,6 @@
     //fetch the current game depending on the game Id
     $browserUUID = getBrowserUUID($host, $user, $password, $database);
     $PlayerIPAddress = $_SERVER['REMOTE_ADDR'];
-
-    logOutPlayer($host, $user, $password, $database, $browserUUID);
-    
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,26 +33,26 @@
                     <p>Time to Expiry</p>
                     <div class="timer">
                         <div>
-                            <p id="remaining-days">12</p>
+                            <p id="remaining-days">...</p>
                             <p>days</p>
                         </div>
                         <span>:</span>
                         <div>
-                            <p id="remaining-hours">12</p>
+                            <p id="remaining-hours">...</p>
                             <p>hours</p>
                         </div>
                         <span>:</span>
                         <div>
-                            <p id="remaining-minutes">32</p>
+                            <p id="remaining-minutes">...</p>
                             <p>mins</p>
                         </div>
                         <span>:</span>
                         <div>
-                            <p id="remaining-seconds">12</p>
+                            <p id="remaining-seconds">...</p>
                             <p>seconds</p>
                         </div>
                     </div>
-                    <p class="max-tournament-games">Max. Promo Tournament games: <span id="max_tournaments">0</span></p>
+                    <p class="max-tournament-games">Rem. Promo Tournament games: <span id="max_tournaments">...</span></p>
                 </div>
                 <ul class="quick-links">
                     <a href="./">Home</a>
@@ -220,7 +217,7 @@
 
 
     <footer>
-        <p>Copyright &#169; 2025 | All Rights Reserved</p>
+        <p>Copyright &#169; 2026 | All Rights Reserved</p>
     </footer>
     <script src="./scripts/api.js"></script>
     <script src="./scripts/dashboard.js"></script>

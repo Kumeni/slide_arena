@@ -1,19 +1,25 @@
 "use strict";
 
 let games;
+let subscription = {
+    expiry_time : API.getSubscriptionExpiryTime(),
+};
+let browser_uuid = API.fetchBrowserUUID();
+
+
+const updateSubscriptionExpiryTime = (()=>{
+    API.updateTimeToExpiry(subscription.expiry_time);
+}, 1000);
+
 //get games
 const updateGames = (userGames) => {
 
-    let browserUUID = userGames.browser_uuid;
-
     games = userGames.games;
-
-    storeBrowserUUID(browserUUID);
     updateAvailableGamesUI(games);
 }
 
-const updateAvailableGamesUI = (games) => {
-    let availableGames = document.getElementById("available-games");
+const updatePlatformSponsoredGamesUI = games => {
+    let availableGames = document.getElementById("platform-sponsored-games");
 
     let innerHTML = `<tr>
                         <th></th>
@@ -32,30 +38,29 @@ const updateAvailableGamesUI = (games) => {
     });
     availableGames.innerHTML = innerHTML;
 
+    //document.getElementById("play-now-button").href="./waiting-room.php?id=" + games[0].id;
+}
+
+const updateAvailableGamesUI = (games) => {
+    let availableGames = document.getElementById("available-games");
+
+    let innerHTML = `<tr>
+                        <th></th>
+                        <th>Min Players</th>
+                        <th></th>
+                    </tr>`;
+
+    games.forEach((element, index) => {
+        innerHTML += `<tr>
+                            <th>${index+1}.</th>
+                            <td> <span>${element.minimum_players} player${element.minimum_players == 1? "" : "s"}</span><br /><span>${element.remaining_players} remaining</span></td>
+                            <td><a href="./waiting-room.php?id=${element.id}"class="join-now-button">JOIN NOW</a></td>
+                        </tr>`
+    });
+    availableGames.innerHTML = innerHTML;
+
     document.getElementById("play-now-button").href="./waiting-room.php?id=" + games[0].id;
 }
-
-const updateUI = setInterval(async () => {
-    
-    let userGames = await API.get("./api/games.php?");
-    updateGames(userGames);
-    API.updateTimeToExpiry();
-
-}, 1000);
-
-const storeBrowserUUID = (browserUUID) => {
-    if (!browserUUID) return false;
-
-    const existingUUID = localStorage.getItem("browser_uuid");
-
-    if (existingUUID !== browserUUID) {
-        localStorage.setItem("browser_uuid", browserUUID);
-    }
-
-    return true;
-}
-
-
 
 const syncPlayerUUID = (serverUUID) => {
     const STORAGE_KEY = "player_uuid";
@@ -100,3 +105,33 @@ const syncPlayerUUID = (serverUUID) => {
 /*Get completed games;
 Get unplayed games;
 Get proceeding games;*/
+
+const sse = createEventSource("./api/available-games.php", {
+
+    open(event) {
+        //console.log("Connection opened.");
+    },
+
+    games(event){
+        let data = JSON.parse(event.data);
+        updateGames(data.games);
+        updatePlatformSponsoredGamesUI(data.games.platform_sponsored_games);
+        API.updateTimeToExpiry();
+    },
+
+    message(event) {
+        //console.log("Message:", event.data);
+    },
+
+    balance(event){
+        console.log("Balance: ", event);
+    },
+
+    error(event, source) {
+        console.log("Connection error.");
+
+        // Close the connection if desired
+        // source.close();
+    }
+
+});

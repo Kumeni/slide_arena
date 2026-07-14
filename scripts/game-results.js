@@ -1,7 +1,7 @@
 const getResults = async (userId, gameId) => {
 
     let game = await API.get("./api/results.php?user-id="+userId+"&game-id="+gameId);
-
+    console.log(game);
     let innerHTML = `<tr>
             <th>No.</th>
             <th>Duration (Seconds)</th>
@@ -11,7 +11,13 @@ const getResults = async (userId, gameId) => {
         </tr>`;
 
     game.players.forEach((player, index) => {
-        innerHTML += `<tr>
+        
+        let me = false;
+
+        console.log(player.browser_uuid);
+        console.log(localStorage.browser_uuid);
+        if(player.browser_uuid == localStorage.browser_uuid) me = true;
+        innerHTML += `<tr ${me? "class='me'": ""}>
             <td>${index+1}</td>
             <td>${player.time_used}</td>
             <td>${player.moves_used}</td>
