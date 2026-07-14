@@ -1,0 +1,91 @@
+[
+    {
+        "id": "479",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 21:02:08"
+    },
+    {
+        "id": "480",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 21:05:41"
+    },
+    {
+        "id": "481",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 21:08:02"
+    },
+    {
+        "id": "482",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 21:11:21"
+    },
+    {
+        "id": "483",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 21:13:56"
+    },
+    {
+        "id": "484",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 21:15:51"
+    },
+    {
+        "id": "485",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 21:16:52"
+    },
+    {
+        "id": "486",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 22:53:06",
+        "players": [
+            {
+                "game_id": "486",
+                "user_id": "::1",
+                "browser_uuid": "b4277391-f194-4608-8410-7a448a4b906f",
+                "id": 321
+            }
+        ]
+    },
+    {
+        "id": "487",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 22:59:02"
+    }
+]

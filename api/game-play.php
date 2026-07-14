@@ -14,7 +14,7 @@
         $browser_uuid = getBrowserUUID($host, $user, $password, $database);
         $gameId = $moveData["game_id"];
         $moves = $moveData["moves"];
-        //$currentTime = "2026-03-08 19:54:00";
+        $currentTime = getCurrentDateTime();
 
         $userId = $_SERVER['REMOTE_ADDR'];
 
@@ -24,24 +24,15 @@
             // Show the player that completed the game, the time, create a new game;
 
             //$sql = "UPDATE articles SET html='$html', text='$text' WHERE id=$articleId";
-            $sql = "UPDATE games SET winner_user_id='$userId', completed_at = '$currentTime' WHERE id=$gameId";
-            update($host, $user, $password, $database, $sql);
+            //$sql = "UPDATE games SET completed_at = '$currentTime' WHERE id=$gameId";
+            //update($host, $user, $password, $database, $sql);
 
             $games = getAvailableGames($host, $user, $password, $database);
 
-            /*if(count($games) == 0){
-
-                // Convert to 9-digit seed
-                $seed = generateSolvableSeed();
-
-                $sql = "INSERT INTO games(`seed`) VALUES('$seed')";
-                $seedId = create($host, $user, $password, $database, $sql);
-
-                $games = getAvailableGames($host, $user, $password, $database);
-            }*/
         }
 
         $currentTime = getCurrentDateTime();
+        
         if(isset($userId)){
             $sql = "INSERT INTO game_moves(`browser_uuid`, `user_id`, `game_id`, `moves`, `created_at`) VALUES('$browser_uuid','$userId', '$gameId', '$moves', '$currentTime')";
         } else {

@@ -1,0 +1,1 @@
+"{\"jsonrpc\":\"2.0\",\"id\":1,\"error\":{\"code\":-32000,\"message\":\"insufficient funds for gas * price + value: balance 27467487322827664, tx cost 27936836949000000, overshot 469349626172336\"}}"

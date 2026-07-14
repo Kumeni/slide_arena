@@ -3,6 +3,8 @@
     require './db.php';
     require './db-operations.php';
     require './core.php';
+    require './subscriptions-core.php';
+    require_once "./json-files-core.php";
 
     // Only allow GET requests
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -24,15 +26,15 @@
     }
 
     if($_SERVER['REQUEST_METHOD'] == 'GET'){
-
-        $games = getAvailableGames($host, $user, $password, $database);
+        
         $browser_uuid = getBrowserUUID($host, $user, $password, $database);
         $PlayerIPAddress = $_SERVER['REMOTE_ADDR'];
+        $user_id = 1;
 
         if(isset($_GET["game-id"])){
             $gameId = $_GET["game-id"];
 
-            $sql = "SELECT * FROM players WHERE game_id=$gameId AND browser_uuid='$browser_uuid'";
+            $sql = "SELECT * FROM players WHERE game_id=$gameId AND browser_uuid='$browser_uuid' AND left_game=0";
             $players = find($host, $user, $password, $database, $sql);
             $players = resultToArray($players);
 
@@ -41,27 +43,22 @@
                 $playerId = create($host, $user, $password, $database, $sql);
             }
 
-            $gameId = $_GET["game-id"];
             $game = getGame($host, $user, $password, $database, $gameId);
             $game = getGamePlayers($host, $user, $password, $database, $game);
             $game = getGameWithRankedPlayers($game);
             echo json_encode($game);
             exit();
         }
-
-        /*if(count($games) == 0){
-
-            $seed = generateSolvableSeed();
-            //$seed = $seed . "9";
-            $currentTime = getCurrentDateTime();
-            $sql = "INSERT INTO games(`seed`, `minimum_players`, `created_at`) VALUES('$seed', '1', '$currentTime')";
-            $gameId = create($host, $user, $password, $database, $sql);
-
-            $games = getAvailableGames($host, $user, $password, $database);
-        }*/
         
+        $games = getAvailableGames($host, $user, $password, $database);
+
+        logOutPlayer($host, $user, $password, $database, $browser_uuid);
         $games = createGames($host, $user, $password, $database);
-        
+        $userSubscriptions = getSubscriptionsWithGamesPlayed($host, $user, $password, $database, $user_id, $browser_uuid);
+        if ($userSubscriptions["remaining_platform_sponsored_tournamens"] == 0) {
+            # code...
+            $games["platform_sponsored_games"] = [];
+        }
         // Return JSON response
         header('Content-Type: application/json');
         $response = [
@@ -70,5 +67,4 @@
         ];
 
         echo json_encode($response);
-        
     }

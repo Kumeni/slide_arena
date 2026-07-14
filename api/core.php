@@ -1,27 +1,30 @@
 <?php 
     
+    //require_once __DIR__ . "/subscriptions-core.php";
+    
+
     function getBrowserUUID($host, $user, $password, $database) {
-        if (session_status() === PHP_SESSION_NONE) {
+        /*if (session_status() === PHP_SESSION_NONE) {
             session_start();
-        }
+        }*/
 
         // Get UUID from header
-        $headerUUID = $_SERVER['HTTP_X_BROWSER_UUID'] ?? null;
-        if(isset($_COOKIE['browser_uuid'])){
+        $headerUUID = $_SERVER['HTTP_X_BROWSER_UUID'] ?? NULL;
+        /*if(isset($_COOKIE['browser_uuid'])){
             $cookieUUID = $_COOKIE['browser_uuid'];
         }
 
         //Cookie uuid overwrites the header uuid;
         if(isset($cookieUUID)) {
             $headerUUID = $cookieUUID;
-        }
+        }*/
         
         // If frontend sends UUID via header, trust and store it
         /**
          * 1. Get all UUIDs stored in the database;
          * 2. If it's in one of them, store it in the session, else generate a new one.
          */
-        if(isset($headerUUID)){
+        if(isset($headerUUID) && $headerUUID != NULL){
              $sql = "SELECT * FROM browsers_uuid WHERE browser_uuid='$headerUUID'";
         } else {
             $sql = "SELECT * FROM browsers_uuid";
@@ -38,21 +41,21 @@
         $browser_uuids = $newArray;
 
         if (count($browser_uuids) > 0) {
-            $_SESSION['browser_uuid'] = $headerUUID;
-            setcookie("browser_uuid", $headerUUID, time() + (86400 * 30), "/");
+            //$_SESSION['browser_uuid'] = $headerUUID;
+            //setcookie("browser_uuid", $headerUUID, time() + (86400 * 30), "/");
         } else {
             
             $browser_uuid = generateUUIDv4();
-            setcookie("browser_uuid", $browser_uuid, time() + (86400 * 30), "/");
-            $_SESSION['browser_uuid'] = $browser_uuid;
+            //setcookie("browser_uuid", $browser_uuid, time() + (86400 * 30), "/");
+            //$_SESSION['browser_uuid'] = $browser_uuid;
             $PlayerIPAddress = $_SERVER['REMOTE_ADDR'];
 
             $sql = "INSERT INTO browsers_uuid(`browser_uuid`, `IP_Address`) VALUES('$browser_uuid', '$PlayerIPAddress')";
             $gameId = create($host, $user, $password, $database, $sql);
+            return $browser_uuid;
         }
 
-        $browser_uuid = $_SESSION['browser_uuid'];
-        return $_SESSION['browser_uuid'];
+        return $browser_uuid["browser_uuid"];
     }
 
     function generateUUIDv4() {
@@ -93,6 +96,31 @@
         /**
          * Creating the desired output array
          */
+        
+        return $newArray;
+    }
+
+    function getGamesNotPlayed($host, $user, $password, $database){
+        //Available games are games which satisfy the following:
+        //Start-times is null or isn't passed; solution:
+        //Fetch all games where
+        $sql = "SELECT * FROM games ORDER BY id DESC";
+        $games = find($host, $user, $password, $database, $sql);
+        $games = resultToArray($games);
+
+        //Game is not yet played if:
+        //start time is null
+        //start time is greater than current time by 5s;
+        $newArray = [];
+        foreach ($games as $key => $game) {
+            # code...
+            if($game["start_time"] == NULL){
+                $newArray[] = $game;
+            } else if(getSecondsToGameStart($game["start_time"]) > 5){
+                $game["seconds_to_start"] = getSecondsToGameStart($game["start_time"]);
+                $newArray[] = $game;
+            }
+        }
 
         return $newArray;
     }
@@ -119,7 +147,7 @@
         /**
          * Fetch the players 
          */
-        $gameId = $id;
+        /*$gameId = $id;
         $sql = "SELECT * FROM players WHERE game_id=$gameId AND deleted=0";
         $players = find($host, $user, $password, $database, $sql);
 
@@ -131,7 +159,7 @@
         }
 
         $game["players"] = $newArray;
-        $game["no_of_players"] = count($game["players"]);
+        $game["no_of_players"] = count($game["players"]);*/
         if(isset($game["id"])){
             return $game;
         } else return null;
@@ -140,10 +168,10 @@
     function getGamePlayers($host, $user, $password, $database, $game){
 
         /**
-         * Fetch all games that haven't started
+         * Fetch all players in the game
          */
         $gameId = $game["id"];
-        $sql = "SELECT * FROM players WHERE game_id=$gameId";
+        $sql = "SELECT * FROM players WHERE game_id=$gameId AND left_game=0";
         $players = find($host, $user, $password, $database, $sql);
 
         $newArray = [];
@@ -169,7 +197,7 @@
         }
 
         $game["players"] = $newArray;
-
+        $game["no_of_players"] = count($game["players"]);
         $game["winner"] = getWinner($host, $user, $password, $database, $game);
         return $game;
     }
@@ -259,11 +287,24 @@
 
     function getAvailableGames($host, $user, $password, $database){
 
-        /**
-         * Fetch all games that haven't started
-         */
-        $sql = "SELECT * FROM games WHERE start_time IS NULL AND winner_user_id IS NULL ORDER BY minimum_players ASC";
+        //Fetch all games that haven't started
+
+        //Available games are games which satisfy the following:
+        //Start-times is null or isn't passed; solution:
+        //Fetch all games where
+
+        //Fetch all the available games
+        $sql = "SELECT * FROM games ORDER BY id DESC";
         $games = find($host, $user, $password, $database, $sql);
+        $games = resultToArray($games);
+
+        //Filter out all the games that have been played
+        $games = filterUplayedGames($games);
+
+        //Sort all games by minimum players
+        $games = sortGamesByMinimumPlayers($games);
+
+        //Get game rewards
         $gameRewards = getGameRewards($host, $user, $password, $database);
 
         $newArray = [];
@@ -335,6 +376,32 @@
         return (int) implode('', $board);
     }
 
+    function filterUplayedGames($games = []){
+        
+        //If there are 0 games return the empty array
+        if(count($games) == 0){
+            return $games;
+        }
+
+        $newArray = [];
+        foreach ($games as $key => $game) {
+            $secondsToStart = getSecondsToGameStart($game["start_time"]);
+            if($secondsToStart == "infinity" || $secondsToStart > 10){
+                $newArray[] = $game;
+            }
+        }
+
+        return $newArray;
+    }
+
+    function sortGamesByMinimumPlayers($games){
+
+        usort($games, function ($a, $b) {
+            return $a['minimum_players'] <=> $b['minimum_players'];
+        });
+
+        return $games;
+    }
 
     /**
      * Rank players directly inside game object.
@@ -412,32 +479,64 @@
     function createGames($host, $user, $password, $database){
         // Fetch all the game rewards;
         $gameRewards = getGameRewards($host, $user, $password, $database);
-        $games = getAvailableGames($host, $user, $password, $database);
+        //$games = getAvailableGames($host, $user, $password, $database);
+        $games = getGamesNotPlayed($host, $user, $password, $database);
 
+        //check if each reward has a game, if not create one and add to the database;
+        //For each reward, create a platform sponsored game if not exists;
         foreach ($gameRewards as $key => $gameReward) {
             # code...
-            $available = false;
+            // Adding normal games for a certain reward if non exists;;
+            $normalGameAvailable = false;
             $gameRewardsId = $gameReward["id"];
 
             foreach ($games as $key => $game) {
                 # code...
-                if($gameRewardsId == $game["game_rewards_id"]){
-                    $available = true;
+                if($gameRewardsId == $game["game_rewards_id"] && $game["platform_sponsored"] == 0){
+                    $normalGameAvailable = true;
                 }
             }
 
-            if($available == false){
+            if($normalGameAvailable == false){
                 $seed = generateSolvableSeed();
                 //$seed = $seed . "9";
                 $currentTime = getCurrentDateTime();
                 $minimum_players = $gameReward["minimum_players"];
                 $sql = "INSERT INTO games(`seed`, `minimum_players`, `created_at`, `game_rewards_id`) VALUES('$seed', '$minimum_players', '$currentTime', '$gameRewardsId')";
                 $gameId = create($host, $user, $password, $database, $sql);
+
+                //Insert normal games here;
+                $newGame = getGame($host, $user, $password, $database, $gameId);
+                addNewGameToJsonFile($newGame);
+            }
+
+            //Adding platform sponsored games for a certain reward if non exists;;
+            $platformSponsoredGameAvailable = false;
+            $gameRewardsId = $gameReward["id"];
+
+            foreach ($games as $key => $game) {
+                # code...
+                if($gameRewardsId == $game["game_rewards_id"] && $game["platform_sponsored"] == 1){
+                    $platformSponsoredGameAvailable = true;
+                }
+            }
+
+            if($platformSponsoredGameAvailable == false){
+                $seed = generateSolvableSeed();
+                //$seed = $seed . "9";
+                $currentTime = getCurrentDateTime();
+                $minimum_players = $gameReward["minimum_players"];
+                $sql = "INSERT INTO games(`seed`, `minimum_players`, `created_at`, `game_rewards_id`, `platform_sponsored`) VALUES('$seed', '$minimum_players', '$currentTime', '$gameRewardsId', 1)";
+                $gameId = create($host, $user, $password, $database, $sql);
+
+                //Insert platform sponsored games here;
+                $newGame = getGame($host, $user, $password, $database, $gameId);
+                addNewGameToJsonFile($newGame);
             }
         }
 
-        return getAvailableGames($host, $user, $password, $database);
-
+        //return getAvailableGames($host, $user, $password, $database);
+        return getNormalAndPlatformSponsoredGames($host, $user, $password, $database);
     }
 
     function getGameRewards($host, $user, $password, $database){
@@ -447,4 +546,236 @@
 
         return $gameRewards;
     }
+
+    function addNewGameToJsonFile($newGame){
+        unset($newGame["seed"]);
+        unset($newGame["formatted_seed"]);
+
+        //Read current Json File
+        $latestGameFile = NULL;
+        $currentGames = [];
+        
+        $latestGameFile = readJsonFile("./cache/games/latest.json");
+        $currentGames = readJsonFile($latestGameFile["latest"]);
+
+        if($currentGames == NULL){
+            $currentGames = [];
+        }
+
+        $currentGames[] = $newGame;
+        $filename = generateJsonFilename("games", 3600);
+        writeJsonFile( $filename,$currentGames);
+        
+        $latest = [
+            "latest" => $filename,
+        ];
+        
+        writeJsonFile("./cache/games/latest.json", $latest);
+    }
+
+    function addPlayerToJsonFile($player){
+        $gameId = $player["game_id"];
+
+        //Read current Json File
+        $latestGameFile = NULL;
+        $currentGames = [];
+        
+        $latestGameFile = readJsonFile( "./cache/games/latest.json");
+        $currentGames = readJsonFile("./" . $latestGameFile["latest"]);
+
+        //Loop through the games
+        foreach ($currentGames as $key => $currentGame) {
+            # code...
+            if($currentGame["id"] == $gameId){
+                //Add the player into the players array;
+                
+                if(!isset($currentGames[$key]["players"])){
+                    $currentGames[$key]["players"] = [];
+                    $currentGame["players"] = [];
+                }
+
+                $currentGames[$key]["players"][] = $player;
+                $currentGame["players"][] = $player;
+            }
+        }
+
+        $filename = generateJsonFilename("games", 3600);
+        writeJsonFile("./" . $filename, $currentGames);
+        
+        $latest = [
+            "latest" => $filename,
+        ];
+        
+        writeJsonFile("cache/games/latest.json", $latest);
+    }
+
+    function getNormalAndPlatformSponsoredGames($host, $user, $password, $database){
+        $availableGames = getAvailableGames($host, $user, $password, $database);
+
+        $newArray = [];
+        $newArray["platform_sponsored_games"] = [];
+        $newArray["games"] = [];
+        foreach ($availableGames as $key => $availableGame) {
+            # code...
+            if($availableGame["platform_sponsored"] == 0){
+                $newArray["games"][] = $availableGame;
+            } else {
+                $newArray["platform_sponsored_games"][] = $availableGame;
+            }
+        }
+
+        return $newArray;
+    }
+
+    /*function getSecondsToGameStart(?string $start_time): ?int
+    {
+        // Return null if no start time was provided
+        if ($start_time === null || trim($start_time) === '') {
+            return null;
+        }
+
+        try {
+            $utc = new DateTimeZone('UTC');
+
+            $gameTime = new DateTime($start_time, $utc);
+            $currentTime = new DateTime('now', $utc);
+
+            // Difference in seconds
+            return max(0, $gameTime->getTimestamp() - $currentTime->getTimestamp());
+
+        } catch (Exception $e) {
+            // Invalid datetime string
+            return null;
+        }
+    }*/
+
+    function getSecondsToGameStart(?string $start_time)
+    {
+        if ($start_time === null || trim($start_time) === '') {
+            return "infinity";
+        }
+
+        try {
+            // Start time is already UTC
+            $gameTimestamp = strtotime($start_time . ' UTC');
+
+            if ($gameTimestamp === false) {
+                return null;
+            }
+
+            // Current UTC time
+            $currentTimestamp = getCurrentDateTime();
+            $currentTimestamp = strtotime($currentTimestamp . ' UTC');
+
+            return max(0, $gameTimestamp - $currentTimestamp);
+
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    function logOutPlayer($host, $user, $password, $database, $browser_uuid){
+        
+        //Fetch all the games the user ever played.
+        $sql = "SELECT * FROM players WHERE browser_uuid='$browser_uuid' ORDER BY id DESC";
+        $playerGames = find($host, $user, $password, $database, $sql);
+        $playerGames = resultToArray($playerGames);
+
+        //Generate sql to get all the games that the user played
+        $sql = "SELECT * FROM games WHERE id IN (";
+        $gamesJoined = [];
+        foreach ($playerGames as $key => $playerGame){
+            $gameId = $playerGame["game_id"];
+
+            $gamesJoined[] = $gameId;
+            if($key == count($playerGames) - 1){
+                $sql .= $gameId;
+            } else {
+                $sql .= $gameId . " ,";
+            }
+        }
+        $sql .= ")";
+
+        $games = find($host, $user, $password, $database, $sql);
+        $games = resultToArray($games);
+
+        $firstPlayer = true;
+        $firstGame = true;
+        $updatePlayersSQL = "UPDATE players SET left_game=1 WHERE id IN (";
+        $updateGameSQL = "UPDATE games SET min_players_time = NULL AND start_time = NULL WHERE id IN (";
+
+        $gamesNotStarted = [];
+        foreach ($games as $key => $game){
+            # code...
+            $gameId = $game["id"];
+            $gameStartTime = $game["start_time"];
+            $secondsToStart = getSecondsToGameStart($game["start_time"]);
+            $game = getGamePlayers($host, $user, $password, $database, $game);
+
+            if($secondsToStart == "infinity" || (int)$secondsToStart >= 5){
+                //update the player to exit the players game
+                //loop through players,, find browsers_uuid,, get playerId
+                //echo "Total Player Games = " . count($playerGames) . " END\n";
+                foreach ($playerGames as $key2 => $player) {
+                    # code...
+                    $playerId = $player["id"];
+                    if($player["game_id"] == $gameId){
+                        $playerId = $player["id"];
+                        if($firstPlayer){
+                            $updatePlayersSQL = $updatePlayersSQL . " $playerId ";
+                            $firstPlayer = false;
+                        } else {
+                            $updatePlayersSQL = $updatePlayersSQL . ", $playerId";
+                        }
+                        $logOutPlayer = true;
+                    }
+                    
+                }
+
+                //get the players in the game, if they still meet the minimum no of players without this player, you've won.
+                if(count($game["players"]) <= (int)$game["minimum_players"]){
+                    /*if($key == 0){
+                        $updateGameSQL = $updateGameSQL + "id";
+                    }*/
+                    $gamesNotStarted[] = $gameId;
+                    if($firstGame){
+                        $updateGameSQL = $updateGameSQL . "$gameId";
+                        $firstGame = false;
+                    } else {
+                        $updateGameSQL = $updateGameSQL . ", $gameId";
+                    }
+                    //$updateGameSQL = "UPDATE games SET min_players_time = NULL AND start_time = NULL WHERE id=$gameId";
+                }
+            }
+        }
+        $updatePlayersSQL .= ")";
+        $updateGameSQL .= ")";
+
+        //var_dump(json_encode($gamesJoined));
+        //var_dump(json_encode($gamesNotStarted));
+        //var_dump(json_encode($playersToLeaveGame));
+        //echo $updateGameSQL;
+        update($host, $user, $password, $database, $updatePlayersSQL);
+        update($host, $user, $password, $database, $updateGameSQL);
+    }
+
+    function getGreaterDate($date1, $date2)
+    {
+        // If one date is null, return the other
+        if ($date1 === null) {
+            return $date2;
+        }
+
+        if ($date2 === null) {
+            return $date1;
+        }
+
+        $dt1 = new DateTimeImmutable($date1, new DateTimeZone('UTC'));
+        $dt2 = new DateTimeImmutable($date2, new DateTimeZone('UTC'));
+
+        return ($dt1 >= $dt2)
+            ? $dt1->format('Y-m-d H:i:s')
+            : $dt2->format('Y-m-d H:i:s');
+    }
+
     ?>

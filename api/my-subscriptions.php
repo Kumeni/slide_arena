@@ -9,7 +9,10 @@
     $PlayerIPAddress = $_SERVER['REMOTE_ADDR'];
 
     $user_id = 1;
-    $userSubscriptions = getActiveUserSubscriptions($host, $user, $password, $database, $user_id, $browserUUID);
+    //$userSubscriptions = getActiveUserSubscriptions($host, $user, $password, $database, $user_id, $browserUUID);
+    $userSubscriptions = getSubscriptionsWithGamesPlayed($host, $user, $password, $database, $user_id, $browserUUID);
+    logOutPlayer($host, $user, $password, $database, $browserUUID);
+    
     echo json_encode($userSubscriptions);
 
 ?>

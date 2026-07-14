@@ -82,7 +82,7 @@
     // CORE VERIFICATION
     // ======================
 
-    function verifyPayment($host, $user, $password, $database, $txHash, $expectedReceiver, $expectedAmount) {
+    /*function verifyPayment($host, $user, $password, $database, $txHash, $expectedReceiver, $expectedAmount) {
 
         $receipt = rpcCall([
             "jsonrpc" => "2.0",
@@ -99,9 +99,9 @@
             return ["status" => false, "message" => "Transaction failed"];
         }
 
-        /*foreach ($receipt["logs"] as $log) {
-            echo "Contract: ".$log["address"].PHP_EOL;
-        }*/
+        //foreach ($receipt["logs"] as $log) {
+            //echo "Contract: ".$log["address"].PHP_EOL;
+        //}
 
         foreach ($receipt["logs"] as $log) {
 
@@ -138,6 +138,85 @@
         }
 
         return ["status" => false, "message" => "No matching USDT transfer"];
+    }*/
+
+    function getTransactionDetails($txHash)
+    {
+        // Get transaction
+        $tx = rpcCall([
+            "jsonrpc" => "2.0",
+            "id" => 1,
+            "method" => "eth_getTransactionByHash",
+            "params" => [$txHash]
+        ]);
+
+        if (!$tx) {
+            return [
+                "status" => false,
+                "message" => "Transaction not found"
+            ];
+        }
+
+        // Get receipt
+        $receipt = rpcCall([
+            "jsonrpc" => "2.0",
+            "id" => 1,
+            "method" => "eth_getTransactionReceipt",
+            "params" => [$txHash]
+        ]);
+
+        if (!$receipt) {
+            return [
+                "status" => false,
+                "message" => "Receipt not found"
+            ];
+        }
+
+        $result = [
+
+            // Basic transaction information
+            "tx_hash" => $tx["hash"],
+            "from" => $tx["from"],
+            "to" => $tx["to"],
+            "nonce" => hexdec($tx["nonce"]),
+            "gas" => hexdec($tx["gas"]),
+            "gas_price" => hexdec($tx["gasPrice"] ?? "0x0"),
+            "value_wei" => hexdec($tx["value"]),
+            "input" => $tx["input"],
+
+            // Receipt information
+            "block_number" => hexdec($receipt["blockNumber"]),
+            "transaction_index" => hexdec($receipt["transactionIndex"]),
+            "gas_used" => hexdec($receipt["gasUsed"]),
+            "cumulative_gas_used" => hexdec($receipt["cumulativeGasUsed"]),
+            "status" => ($receipt["status"] === "0x1"),
+            "contract_address" => $receipt["contractAddress"],
+
+            // Token transfers found in logs
+            "transfers" => []
+        ];
+
+        foreach ($receipt["logs"] as $log) {
+
+            if (
+                isset($log["topics"][0]) &&
+                strtolower($log["topics"][0]) === strtolower(TRANSFER_TOPIC)
+            ) {
+
+                $from = "0x" . substr($log["topics"][1], 26);
+                $to   = "0x" . substr($log["topics"][2], 26);
+
+                $result["transfers"][] = [
+                    "token_contract" => $log["address"],
+                    "from" => $from,
+                    "to" => $to,
+                    "amount_raw" => $log["data"],
+                    "amount" => hexToAmount($log["data"])
+                ];
+            }
+        }
+
+        return $result;
     }
 
     // ======================
@@ -152,8 +231,33 @@
         //
 
         // Verify blockchain
-        $result = verifyPayment($host, $user, $password, $database, $txHash, $wallet, $amount);
+        //$result = verifyPayment($host, $user, $password, $database, $txHash, $wallet, $amount);
+        $result = getTransactionDetails($txHash)($txHash);
+        /*
+            [tx_hash] => 0x123...
+            [from] => 0xabc...
+            [to] => 0xc2132D05D31c914a87C6611C10748AEb04B58e8
+            [nonce] => 145
+            [gas] => 60000
+            [gas_price] => 30000000000
+            [value_wei] => 0
+            [input] => 0xa9059cbb...
+            [block_number] => 73512456
+            [gas_used] => 52141
+            [status] => 1
 
+            [transfers] => Array
+                (
+                    [0] => Array
+                        (
+                            [token_contract] => 0xc2132D05D31c914a87C6611C10748AEb04B58e8
+                            [from] => 0x111...
+                            [to] => 0x222...
+                            [amount] => 25
+                        )
+                )
+        */
+                
         if ($result["status"]) {
 
             $to = $result["to"];

@@ -1,0 +1,193 @@
+[
+    {
+        "id": "479",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 21:02:08"
+    },
+    {
+        "id": "480",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 21:05:41"
+    },
+    {
+        "id": "481",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 21:08:02"
+    },
+    {
+        "id": "482",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 21:11:21"
+    },
+    {
+        "id": "483",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 21:13:56"
+    },
+    {
+        "id": "484",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 21:15:51"
+    },
+    {
+        "id": "485",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 21:16:52"
+    },
+    {
+        "id": "486",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 22:53:06",
+        "players": [
+            {
+                "game_id": "486",
+                "user_id": "::1",
+                "browser_uuid": "b4277391-f194-4608-8410-7a448a4b906f",
+                "id": 321
+            }
+        ]
+    },
+    {
+        "id": "487",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 22:59:02",
+        "players": [
+            {
+                "game_id": "487",
+                "user_id": "::1",
+                "browser_uuid": "b4277391-f194-4608-8410-7a448a4b906f",
+                "id": 323
+            }
+        ]
+    },
+    {
+        "id": "488",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 23:01:01",
+        "players": [
+            {
+                "game_id": "488",
+                "user_id": "::1",
+                "browser_uuid": "b4277391-f194-4608-8410-7a448a4b906f",
+                "id": 324
+            }
+        ]
+    },
+    {
+        "id": "489",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 23:03:05",
+        "players": [
+            {
+                "game_id": "489",
+                "user_id": "::1",
+                "browser_uuid": "b4277391-f194-4608-8410-7a448a4b906f",
+                "id": 325
+            }
+        ]
+    },
+    {
+        "id": "490",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 23:04:05",
+        "players": [
+            {
+                "game_id": "490",
+                "user_id": "::1",
+                "browser_uuid": "b4277391-f194-4608-8410-7a448a4b906f",
+                "id": 330
+            }
+        ]
+    },
+    {
+        "id": "491",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 23:19:50",
+        "players": [
+            {
+                "game_id": "491",
+                "user_id": "::1",
+                "browser_uuid": "b4277391-f194-4608-8410-7a448a4b906f",
+                "id": 331
+            }
+        ]
+    },
+    {
+        "id": "492",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 23:37:33",
+        "players": [
+            {
+                "game_id": "492",
+                "user_id": "::1",
+                "browser_uuid": "b4277391-f194-4608-8410-7a448a4b906f",
+                "id": 337
+            }
+        ]
+    },
+    {
+        "id": "493",
+        "minimum_players": "1",
+        "game_rewards_id": "1",
+        "min_players_time": null,
+        "start_time": null,
+        "platform_sponsored": "0",
+        "created_at": "2026-07-13 23:52:59"
+    }
+]
